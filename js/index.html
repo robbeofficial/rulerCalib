@@ -13,7 +13,7 @@
       margin: 0;
       box-sizing: border-box;
     }
-
+    body {overflow: hidden;}
     .transformable {
       position: absolute;
       border: 2px dashed #0ff;
@@ -245,7 +245,7 @@
         edge.length = measurement
         edge.a.htmlElem.style.borderColor = 'red';
         edge.b.htmlElem.style.borderColor = 'red';
-        measureEdgeIndex++;
+        measureEdgeIndex = (measureEdgeIndex + 1) % g.edges.length;
       },100)
       
       return false;
