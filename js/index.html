@@ -236,6 +236,7 @@
     
     let measureEdgeIndex = 0;
     document.getElementById('measureBtn').addEventListener('click', function(e){
+      mode = 'fine';
       let edge = g.edges[measureEdgeIndex];
       edge.a.htmlElem.style.borderColor = 'cyan';
       edge.b.htmlElem.style.borderColor = 'cyan';
