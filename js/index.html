@@ -1,417 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta content="IE=edge" http-equiv="X-UA-Compatible">
-<meta content="width=device-width,initial-scale=1" name="viewport">
-<title>Perspective Transform with CSS</title>
-<style type="text/css">
-  * { padding: 0; margin:0; box-sizing: border-box; }
-  .transformable {
-    position: absolute;
-    border: 2px dashed #0ff;
-    /* width/height here only effects how detailed the picture gets rendered. higher = less pixelated */
-    width: 512px;
-    height: 512px;
-    transform-origin: 0 0;
-    /* this helps in making the image less annoyingly draggy/selectable */
-    user-select: none; -moz-user-select: none;
-    user-drag: none; -webkit-user-drag: none;
-  }
-  /* this inverts colors so its nice and dark */
-  .inverted { filter: invert(100%); -webkit-filter: invert(100%); background: #000; }
-  #box { z-index: 10; }
-  #bigbox { z-index: 1; }
-</style>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width,initial-scale=1" name="viewport">
+  <title>Perspective Transform with CSS</title>
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .transformable {
+      position: absolute;
+      border: 2px dashed #0ff;
+      /* width/height here only effects how detailed the picture gets rendered. higher = less pixelated */
+      width: 512px;
+      height: 512px;
+      transform-origin: 0 0;
+      /* this helps in making the image less annoyingly draggy/selectable */
+      user-select: none;
+      -moz-user-select: none;
+      user-drag: none;
+      -webkit-user-drag: none;
+    }
+
+    /* this inverts colors so its nice and dark */
+    .inverted {
+      filter: invert(100%);
+      -webkit-filter: invert(100%);
+      background: #000;
+    }
+
+    .handle{ position: absolute; top: 0; left: 0; width: 10px; height: 10px; border-radius: 50%; border: 2px solid; border-color: red; z-index: 99;}
+    /*.handle{ position: absolute; top: 0; left: 0; width: 0px; height: 0px; }*/
+    #menu{
+      position: absolute;
+      width: 8em;
+      right: 0;
+      top: 0;
+      z-index: 10;
+    }
+    #menu .btn{
+      width: 100%;
+      font-size: 0.9em;
+      font-family: 'Open Sans', sans;
+    }
+    .btn {
+      display: block;
+      list-style: none;
+      float: left;
+      margin-top: 4px;
+
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+
+      border-radius: 4px;
+      transition: all 0.5s;
+      text-decoration: none;
+      color: #999;
+      background: #222;
+      border: 1px solid #ccc;
+    }
+    .btn:hover{
+      background: #999;
+      color: #222;
+    }
+  </style>
 </head>
+
 <body class="inverted">
 
+  <img id="bigbox" class="transformable" src="https://upload.wikimedia.org/wikipedia/commons/8/80/Wikipedia-logo-v2.svg">
+  <img id="box" class="transformable" style="border: none" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld2JveD0nMCAwIDQwIDQwJz4KPHN0eWxlPgogICAgICAgIHJlY3QsIHBhdGggewogICAgICAgICAgICBmaWxsOiBub25lOwogICAgICAgICAgICBzdHJva2U6ICMwMDA7CiAgICAgICAgICAgIHN0cm9rZS13aWR0aDogM3B4OwogICAgICAgICAgICB2ZWN0b3ItZWZmZWN0OiBub24tc2NhbGluZy1zdHJva2U7CiAgICAgICAgICAgIHN0cm9rZS1kYXNoYXJyYXk6IDE2cHg7CiAgICAgICAgICAgIGFuaW1hdGlvbjogc3Ryb2tlIDAuNHMgbGluZWFyIGluZmluaXRlOwogICAgICAgICAgICBzaGFwZS1yZW5kZXJpbmc6IGdlb21ldHJpY1ByZWNpc2lvbjsKICAgICAgICAgICAgc3Ryb2tlLWRhc2hvZmZzZXQ6IDMycHg7CiAgICAgICAgfQogICAgICAgIHJlY3QgewogICAgICAgICAgICBzdHJva2Utd2lkdGg6IDNweDsKICAgICAgICB9CgogICAgICAgIEBrZXlmcmFtZXMgc3Ryb2tlIHsKICAgICAgICAgICAgdG8gewogICAgICAgICAgICAgICAgc3Ryb2tlLWRhc2hvZmZzZXQ6IDA7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICA8L3N0eWxlPgogICAgPHBhdGggZD0nTSAyMCwyMCBMIDQwLDQwJy8+CiAgICA8cGF0aCBkPSdNIDIwLDIwIEwgMDAsNDAnLz4KICAgIDxwYXRoIGQ9J00gMjAsMjAgTCA0MCwwJy8+CiAgICA8cGF0aCBkPSdNIDIwLDIwIEwgMCwwJy8+CiAgICA8cmVjdCB3aWR0aD0nNDAnIGhlaWdodD0nNDAnLz4KPC9zdmc+">
+  <div id="menu">
+    <button id="modeBtn" class="btn">mode - fine</button>
+    <button id="measureBtn" class="btn">measure</button>
+  </div>
+  
+  <script src="perspective-transform.js"></script>
+  <script src="graph.js"></script>
 
+  <!-- ####################################################################################### -->
 
-<!-- <svg id="box" class="transformable" xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewbox='0 0 40 40'>
-<style>
-        rect, path {
-            fill: none;
-            stroke: #000;
-            stroke-width: 1px;
-            vector-effect: non-scaling-stroke;
-            stroke-dasharray: 4px;
-            animation: stroke 0.2s linear infinite;
-            shape-rendering: geometricPrecision;
-            stroke-dashoffset: 8px;
+  <script>/* main app code */
+    let mode = 'fine';
+
+    let g = new Graph();
+    g.nodes = [
+      new Node(100, 100, 0, 0),
+      new Node(200, 100, 1000, 0),
+      new Node(200, 200, 1000, 1000),
+      new Node(100, 200, 0, 1000),
+    ];
+
+    g.edges = [
+      new Edge(g.nodes[0], g.nodes[1], 100),
+      new Edge(g.nodes[1], g.nodes[2], 100),
+      new Edge(g.nodes[2], g.nodes[3], 100),
+      new Edge(g.nodes[3], g.nodes[0], 100),
+      new Edge(g.nodes[0], g.nodes[2], 100),
+      //new Edge(n[1], n[3], 100),
+    ];
+
+    function ejaculateGraph(g) {
+      g.nodes.forEach(function(n, i) {
+        n.htmlElem = document.createElement("div");
+        n.htmlElem.style.left = `${n.p.x}px`;
+        n.htmlElem.style.top = `${n.p.y}px`;
+        n.htmlElem.classList.add("handle");
+        n.htmlElem.id = `node-${i}`;
+        n.htmlElem.style.position = "absolute";
+        n.callback = function(e){
+          e.htmlElem.style.left = `${e.p.x}px`;
+          e.htmlElem.style.top = `${e.p.y}px`;
+          update();
         }
-        rect {
-            stroke-width: 2px;
+        document.body.insertBefore(n.htmlElem, document.body.childNodes[0]);
+      })
+    }
+    window.addEventListener('DOMContentLoaded', function(){ ejaculateGraph(g) })
+    
+
+    function getTransformationMatrix(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
+      var w = elt.offsetWidth, h = elt.offsetHeight;
+      var transform = PerspT([0, 0, w, 0, 0, h, w, h], [x1, y1, x2, y2, x3, y3, x4, y4]);
+      var t = transform.coeffs;
+      return [t[0], t[3], 0, t[6],
+      t[1], t[4], 0, t[7],
+        0, 0, 1, 0,
+      t[2], t[5], 0, t[8]];
+    }
+
+    // helps in chaining together transformation steps and applying them CSS wise
+    function transform(el, steps) {
+      steps = steps.map(function (e) { return `${e[0]}(${e[1].join(', ')})` }).join(' ');
+      el.style["-webkit-transform"] = steps;
+      el.style["-moz-transform"] = steps;
+      el.style.transform = steps;
+      return steps;
+    }
+
+    /* this determines where initial image is and how big it is */
+    var w = 8.27 * 20, //reference object size
+      h = 11.69 * 20,
+      bw = 20 * 20,  //big box size
+      bh = 20 * 20,
+      cx = 200,    //pretty irrelevant, just move it a bit into the middle
+      cy = 200;
+    // corners of the reference object
+    /*var corners = [
+      cx - (w / 2), cy - (h / 2),
+      cx + (w / 2), cy - (h / 2),
+      cx - (w / 2), cy + (h / 2),
+      cx + (w / 2), cy + (h / 2)
+    ];*/
+    // corners of the big box
+    /*var bcorners = [
+      cx - (bw / 2), cy - (bh / 2),
+      cx + (bw / 2), cy - (bh / 2),
+      cx - (bw / 2), cy + (bh / 2),
+      cx + (bw / 2), cy + (bh / 2)
+    ];*/
+    function update() {
+      var box = document.getElementById("box");
+      var bigbox = document.getElementById("bigbox");
+      var tm = getTransformationMatrix(
+        box,
+        g.nodes[0].p.x, g.nodes[0].p.y,
+        g.nodes[1].p.x, g.nodes[1].p.y,
+        g.nodes[3].p.x, g.nodes[3].p.y,
+        g.nodes[2].p.x, g.nodes[2].p.y,
+        /*corners[0], corners[1],
+        corners[2], corners[3],
+        corners[4], corners[5],
+        corners[6], corners[7]*/
+      );
+      transform(box, [['matrix3d', tm]]);
+      var t = transform(bigbox, [
+        ['matrix3d', tm],
+        ['scale', [bw / w, bh / h]],
+        ['translate', ['' + -((bw / 2) - (w / 2)) + 'px', '' + -((bh / 2) - (h / 2)) + 'px']] // TODO: somehow wrong .. math is hard
+      ]);
+      //console.log(t);
+    }
+    update();
+
+    function draw() {
+      if(mode == 'rough') g.updateWeights();
+      else if(mode == 'fine') g.updateForces(33);
+      window.requestAnimationFrame(draw);
+    }
+    draw()
+
+
+    /* mouse handler */
+
+    function move(evnt) {
+      if (currentnode < 0) return;
+      currentnode.screenPos = new Vector(evnt.pageX, evnt.pageY)
+      //update();
+    }
+
+    var currentnode = -1;
+
+    window.addEventListener('mousedown', function (evnt) {
+      if (evnt.button != 0) return;
+      var x = evnt.pageX, y = evnt.pageY;
+      var best = Infinity;
+      currentnode = -1;
+      g.nodes.forEach(function(n,i){
+        let d = n.p.dist(new Vector(x,y));
+        if(d < 100 && d < best){
+          best = d;
+          currentnode = n;
         }
-
-        @keyframes stroke {
-            to {
-                stroke-dashoffset: 0;
-            }
-        }
-    </style>
-    <path d='M 20,20 L 40,40'/>
-    <path d='M 20,20 L 00,40'/>
-    <path d='M 20,20 L 40,0'/>
-    <path d='M 20,20 L 0,0'/>
-    <rect width='40' height='40'/>
-</svg>
- -->
-
-<img id="box" class="transformable" style="border: none" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc0MCcgdmlld2JveD0nMCAwIDQwIDQwJz4KPHN0eWxlPgogICAgICAgIHJlY3QsIHBhdGggewogICAgICAgICAgICBmaWxsOiBub25lOwogICAgICAgICAgICBzdHJva2U6ICMwMDA7CiAgICAgICAgICAgIHN0cm9rZS13aWR0aDogM3B4OwogICAgICAgICAgICB2ZWN0b3ItZWZmZWN0OiBub24tc2NhbGluZy1zdHJva2U7CiAgICAgICAgICAgIHN0cm9rZS1kYXNoYXJyYXk6IDE2cHg7CiAgICAgICAgICAgIGFuaW1hdGlvbjogc3Ryb2tlIDAuNHMgbGluZWFyIGluZmluaXRlOwogICAgICAgICAgICBzaGFwZS1yZW5kZXJpbmc6IGdlb21ldHJpY1ByZWNpc2lvbjsKICAgICAgICAgICAgc3Ryb2tlLWRhc2hvZmZzZXQ6IDMycHg7CiAgICAgICAgfQogICAgICAgIHJlY3QgewogICAgICAgICAgICBzdHJva2Utd2lkdGg6IDNweDsKICAgICAgICB9CgogICAgICAgIEBrZXlmcmFtZXMgc3Ryb2tlIHsKICAgICAgICAgICAgdG8gewogICAgICAgICAgICAgICAgc3Ryb2tlLWRhc2hvZmZzZXQ6IDA7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICA8L3N0eWxlPgogICAgPHBhdGggZD0nTSAyMCwyMCBMIDQwLDQwJy8+CiAgICA8cGF0aCBkPSdNIDIwLDIwIEwgMDAsNDAnLz4KICAgIDxwYXRoIGQ9J00gMjAsMjAgTCA0MCwwJy8+CiAgICA8cGF0aCBkPSdNIDIwLDIwIEwgMCwwJy8+CiAgICA8cmVjdCB3aWR0aD0nNDAnIGhlaWdodD0nNDAnLz4KPC9zdmc+">
-<img id="bigbox" class="transformable" src="https://upload.wikimedia.org/wikipedia/commons/8/80/Wikipedia-logo-v2.svg">
-
-<script>/* perspective-transform.js */
-(function(root) {
-  // If the user is not including numeric.js already, add shim so this library works. Removes dependency on numeric.js
-  if(root.numeric) return;
-  else{
-    var numeric = {};
-
-    numeric.dim = function dim(x) {
-      var y,z;
-      if(typeof x === "object") {
-        y = x[0];
-        if(typeof y === "object") {
-          z = y[0];
-          if(typeof z === "object") {
-            return numeric._dim(x);
-          }
-          return [x.length,y.length];
-        }
-        return [x.length];
-      }
-      return [];
-    };
-
-    numeric._foreach2 = (function _foreach2(x,s,k,f) {
-      if(k === s.length-1) { return f(x); }
-      var i,n=s[k], ret = Array(n);
-      for(i=n-1;i>=0;i--) { ret[i] = _foreach2(x[i],s,k+1,f); }
-      return ret;
+      })
+      g.dragged = currentnode;
+      move(evnt);
     });
 
-    numeric.cloneV = function (x) {
-      var _n = x.length;
-      var i, ret = Array(_n);
+    window.addEventListener('mouseup', function (evnt) { currentnode = -1; g.dragged = null })
+    window.addEventListener('mousemove', move);
 
-      for(i=_n-1;i!==-1;--i) {
-        ret[i] = (x[i]);
-      }
-      return ret;
-    };
-
-    numeric.clone = function (x) {
-      if(typeof x !== "object") return (x);
-      var V = numeric.cloneV;
-      var s = numeric.dim(x);
-      return numeric._foreach2(x,s,0,V);
-    };
-
-    numeric.diag = function diag(d) {
-      var i,i1,j,n = d.length, A = Array(n), Ai;
-      for(i=n-1;i>=0;i--) {
-        Ai = Array(n);
-        i1 = i+2;
-        for(j=n-1;j>=i1;j-=2) {
-          Ai[j] = 0;
-          Ai[j-1] = 0;
-        }
-        if(j>i) { Ai[j] = 0; }
-        Ai[i] = d[i];
-        for(j=i-1;j>=1;j-=2) {
-          Ai[j] = 0;
-          Ai[j-1] = 0;
-        }
-        if(j===0) { Ai[0] = 0; }
-        A[i] = Ai;
-      }
-      return A;
-    };
-
-    numeric.rep = function rep(s,v,k) {
-      if(typeof k === "undefined") { k=0; }
-      var n = s[k], ret = Array(n), i;
-      if(k === s.length-1) {
-        for(i=n-2;i>=0;i-=2) { ret[i+1] = v; ret[i] = v; }
-        if(i===-1) { ret[0] = v; }
-        return ret;
-      }
-      for(i=n-1;i>=0;i--) { ret[i] = numeric.rep(s,v,k+1); }
-      return ret;
-    };
-
-    numeric.identity = function(n) { return numeric.diag(numeric.rep([n],1)); };
-
-    numeric.inv = function inv(a) {
-      var s = numeric.dim(a), abs = Math.abs, m = s[0], n = s[1];
-      var A = numeric.clone(a), Ai, Aj;
-      var I = numeric.identity(m), Ii, Ij;
-      var i,j,k,x;
-      for(j=0;j<n;++j) {
-        var i0 = -1;
-        var v0 = -1;
-        for(i=j;i!==m;++i) { k = abs(A[i][j]); if(k>v0) { i0 = i; v0 = k; } }
-        Aj = A[i0]; A[i0] = A[j]; A[j] = Aj;
-        Ij = I[i0]; I[i0] = I[j]; I[j] = Ij;
-        x = Aj[j];
-        for(k=j;k!==n;++k)    Aj[k] /= x;
-        for(k=n-1;k!==-1;--k) Ij[k] /= x;
-        for(i=m-1;i!==-1;--i) {
-          if(i!==j) {
-            Ai = A[i];
-            Ii = I[i];
-            x = Ai[j];
-            for(k=j+1;k!==n;++k)  Ai[k] -= Aj[k]*x;
-            for(k=n-1;k>0;--k) { Ii[k] -= Ij[k]*x; --k; Ii[k] -= Ij[k]*x; }
-            if(k===0) Ii[0] -= Ij[0]*x;
-          }
-        }
-      }
-      return I;
-    };
-
-    numeric.dotMMsmall = function dotMMsmall(x,y) {
-      var i,j,k,p,q,r,ret,foo,bar,woo,i0;
-      p = x.length; q = y.length; r = y[0].length;
-      ret = Array(p);
-      for(i=p-1;i>=0;i--) {
-        foo = Array(r);
-        bar = x[i];
-        for(k=r-1;k>=0;k--) {
-          woo = bar[q-1]*y[q-1][k];
-          for(j=q-2;j>=1;j-=2) {
-            i0 = j-1;
-            woo += bar[j]*y[j][k] + bar[i0]*y[i0][k];
-          }
-          if(j===0) { woo += bar[0]*y[0][k]; }
-          foo[k] = woo;
-        }
-        ret[i] = foo;
-      }
-      return ret;
-    };
-
-    numeric.dotMV = function dotMV(x,y) {
-      var p = x.length, i;
-      var ret = Array(p), dotVV = numeric.dotVV;
-      for(i=p-1;i>=0;i--) { ret[i] = dotVV(x[i],y); }
-      return ret;
-    };
-
-    numeric.dotVV = function dotVV(x,y) {
-      var i,n=x.length,i1,ret = x[n-1]*y[n-1];
-      for(i=n-2;i>=1;i-=2) {
-        i1 = i-1;
-        ret += x[i]*y[i] + x[i1]*y[i1];
-      }
-      if(i===0) { ret += x[0]*y[0]; }
-      return ret;
-    };
-
-    numeric.transpose = function transpose(x) {
-      var i,j,m = x.length,n = x[0].length, ret=Array(n),A0,A1,Bj;
-      for(j=0;j<n;j++) ret[j] = Array(m);
-      for(i=m-1;i>=1;i-=2) {
-        A1 = x[i];
-        A0 = x[i-1];
-        for(j=n-1;j>=1;--j) {
-          Bj = ret[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
-          --j;
-          Bj = ret[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
-        }
-        if(j===0) {
-          Bj = ret[0]; Bj[i] = A1[0]; Bj[i-1] = A0[0];
-        }
-      }
-      if(i===0) {
-        A0 = x[0];
-        for(j=n-1;j>=1;--j) {
-          ret[j][0] = A0[j];
-          --j;
-          ret[j][0] = A0[j];
-        }
-        if(j===0) { ret[0][0] = A0[0]; }
-      }
-      return ret;
-    };
-
-    this.numeric = numeric;
-    root.numeric = numeric;
-  }
-
-}(this));
-
-(function(global, factory) {
-  if(typeof exports === 'object' && typeof module !== undefined){ module.exports = factory() }
-  else if(typeof define === 'function' && define.amd){ define(factory) }
-  else{ global.PerspT = factory() }
-}(this, function(){
-  'use strict';
-  function round(num){ return Math.round(num*10000000000)/10000000000 }
-
-  function getNormalizationCoefficients(srcPts, dstPts, isInverse){
-    if(isInverse){
-      var tmp = dstPts;
-      dstPts = srcPts;
-      srcPts = tmp;
-    }
-    var r1 = [srcPts[0], srcPts[1], 1, 0, 0, 0, -1*dstPts[0]*srcPts[0], -1*dstPts[0]*srcPts[1]];
-    var r2 = [0, 0, 0, srcPts[0], srcPts[1], 1, -1*dstPts[1]*srcPts[0], -1*dstPts[1]*srcPts[1]];
-    var r3 = [srcPts[2], srcPts[3], 1, 0, 0, 0, -1*dstPts[2]*srcPts[2], -1*dstPts[2]*srcPts[3]];
-    var r4 = [0, 0, 0, srcPts[2], srcPts[3], 1, -1*dstPts[3]*srcPts[2], -1*dstPts[3]*srcPts[3]];
-    var r5 = [srcPts[4], srcPts[5], 1, 0, 0, 0, -1*dstPts[4]*srcPts[4], -1*dstPts[4]*srcPts[5]];
-    var r6 = [0, 0, 0, srcPts[4], srcPts[5], 1, -1*dstPts[5]*srcPts[4], -1*dstPts[5]*srcPts[5]];
-    var r7 = [srcPts[6], srcPts[7], 1, 0, 0, 0, -1*dstPts[6]*srcPts[6], -1*dstPts[6]*srcPts[7]];
-    var r8 = [0, 0, 0, srcPts[6], srcPts[7], 1, -1*dstPts[7]*srcPts[6], -1*dstPts[7]*srcPts[7]];
-
-    var matA = [r1, r2, r3, r4, r5, r6, r7, r8];
-    var matB = dstPts;
-    var matC;
-
-    try{
-      matC = numeric.inv(numeric.dotMMsmall(numeric.transpose(matA), matA));
-    }catch(e){
-      console.log(e);
-      return [1,0,0,0,1,0,0,0];
-    }
-
-    var matD = numeric.dotMMsmall(matC, numeric.transpose(matA));
-    var matX = numeric.dotMV(matD, matB);
-    for(var i = 0; i < matX.length; i++) {
-      matX[i] = round(matX[i]);
-    }
-    matX[8] = 1;
-
-    return matX;
-  }
-
-  function PerspT(srcPts, dstPts){
-    if( (typeof window !== 'undefined' && window === this) || this === undefined) {
-      return new PerspT(srcPts, dstPts);
-    }
-
-    this.srcPts = srcPts;
-    this.dstPts = dstPts;
-    this.coeffs = getNormalizationCoefficients(this.srcPts, this.dstPts, false);
-    this.coeffsInv = getNormalizationCoefficients(this.srcPts, this.dstPts, true);
-
-    return this;
-  }
-
-  PerspT.prototype = {
-    transform: function(x,y) {
-      var coordinates = [];
-      coordinates[0] = (this.coeffs[0]*x + this.coeffs[1]*y + this.coeffs[2]) / (this.coeffs[6]*x + this.coeffs[7]*y + 1);
-      coordinates[1] = (this.coeffs[3]*x + this.coeffs[4]*y + this.coeffs[5]) / (this.coeffs[6]*x + this.coeffs[7]*y + 1);
-      return coordinates;
-    },
-
-    transformInverse: function(x,y) {
-      var coordinates = [];
-      coordinates[0] = (this.coeffsInv[0]*x + this.coeffsInv[1]*y + this.coeffsInv[2]) / (this.coeffsInv[6]*x + this.coeffsInv[7]*y + 1);
-      coordinates[1] = (this.coeffsInv[3]*x + this.coeffsInv[4]*y + this.coeffsInv[5]) / (this.coeffsInv[6]*x + this.coeffsInv[7]*y + 1);
-      return coordinates;
-    }
-  };
-
-  return PerspT;
-}));
-</script>
-
-<!-- ####################################################################################### -->
-
-<script>/* main app code */
-function getTransformationMatrix(elt, x1, y1, x2, y2, x3, y3, x4, y4){
-  var w = elt.offsetWidth, h = elt.offsetHeight;
-  var transform = PerspT([0, 0, w, 0, 0, h, w, h], [x1, y1, x2, y2, x3, y3, x4, y4]);
-  var t = transform.coeffs;
-  return [t[0], t[3], 0, t[6],
-         t[1], t[4], 0, t[7],
-         0   , 0   , 1, 0   ,
-         t[2], t[5], 0, t[8]];
-}
-
-// helps in chaining together transformation steps and applying them CSS wise
-function transform(el, steps){
-  steps = steps.map(function(e){return `${e[0]}(${e[1].join(', ')})` }).join(' ');
-  el.style["-webkit-transform"] = steps;
-  el.style["-moz-transform"] = steps;
-  el.style.transform = steps;
-  return steps;
-}
-
-/* this determines where initial image is and how big it is */
-var w = 8.27*20, //reference object size
-    h = 11.69*20,
-    bw = 20*20,  //big box size
-    bh = 20*20,
-    cx = 200,    //pretty irrelevant, just move it a bit into the middle
-    cy = 200;
-// corners of the reference object
-var corners = [
-  cx-(w/2), cy-(h/2),
-  cx+(w/2), cy-(h/2),
-  cx-(w/2), cy+(h/2),
-  cx+(w/2), cy+(h/2)
-];
-// corners of the big box
-var bcorners = [
-  cx-(bw/2), cy-(bh/2),
-  cx+(bw/2), cy-(bh/2),
-  cx-(bw/2), cy+(bh/2),
-  cx+(bw/2), cy+(bh/2)
-];
-function update() {
-  var box = document.getElementById("box");
-  var bigbox = document.getElementById("bigbox");
-  var tm = getTransformationMatrix(
-    box,
-    corners[0], corners[1],
-    corners[2], corners[3],
-    corners[4], corners[5],
-    corners[6], corners[7]
-  );
-  transform(box, [['matrix3d', tm]]);
-  var t = transform(bigbox, [
-    ['matrix3d', tm],
-    ['scale', [bw/w, bh/h]],
-    ['translate', [''+ -((bw/2)-(w/2)) + 'px', ''+ -((bh/2)-(h/2)) + 'px']] // TODO: somehow wrong .. math is hard
-  ]);
-  console.log(t);
-}
-update();
-
-/* mouse handler */
-
-function move(evnt) {
-  if(currentcorner < 0) return;
-  corners[currentcorner] = evnt.pageX;
-  corners[currentcorner + 1] = evnt.pageY;
-  update();
-}
-
-var currentcorner = -1;
-
-window.addEventListener('mousedown', function(evnt){
-  if(evnt.button != 0) return;
-  var x = evnt.pageX, y = evnt.pageY, dx, dy;
-  var best = Infinity;
-  currentcorner = -1;
-  for (var i = 0; i != 8; i += 2) {
-    dx = x - corners[i];
-    dy = y - corners[i + 1];
-    if (best > dx*dx + dy*dy) {
-      best = dx*dx + dy*dy;
-      currentcorner = i;
-    }
-  }
-  move(evnt);
-});
-
-window.addEventListener('mouseup', function(evnt) { currentcorner = -1 })
-window.addEventListener('mousemove', move);
-</script>
+    document.getElementById('modeBtn').addEventListener('click', function(e){
+      if(mode == 'rough') mode = 'fine';
+      else if(mode = 'fine') mode = 'rough';
+      e.target.innerText = `mode - ${mode}`;
+      return false;
+    });
+    
+    let measureEdgeIndex = 0;
+    document.getElementById('measureBtn').addEventListener('click', function(e){
+      let edge = g.edges[measureEdgeIndex];
+      edge.a.htmlElem.style.borderColor = 'cyan';
+      edge.b.htmlElem.style.borderColor = 'cyan';
+      setTimeout(function(){
+        let measurement = prompt('Please enter the length of the highlighted edge on the projection surface in mm.', edge.length.toFixed(2))
+        console.log(measurement)
+        edge.length = measurement
+        edge.a.htmlElem.style.borderColor = 'red';
+        edge.b.htmlElem.style.borderColor = 'red';
+        measureEdgeIndex++;
+      },100)
+      
+      return false;
+    });
+    
+  </script>
 </body>
+
 </html>
